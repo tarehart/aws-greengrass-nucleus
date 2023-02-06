@@ -429,6 +429,11 @@ public class IotJobsHelper implements InjectionActions {
                             .log("Job status updated rejected");
                     gotResponse.completeExceptionally(new Exception(response.message));
                 });
+
+        // Truncate status detail map values longer than the 1024 characters limit
+        statusDetailsMap.entrySet().forEach(e -> statusDetailsMap.put(e.getKey(),
+                e.getValue().substring(0, Math.min(e.getValue().length() - 1, 1023))));
+
         UpdateJobExecutionRequest updateJobRequest = new UpdateJobExecutionRequest();
         updateJobRequest.jobId = jobId;
         updateJobRequest.status = status;
